@@ -9,6 +9,8 @@ import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ContactModule } from './contact/contact.module';
+import { EquipmentModule } from './equipment/equipment.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { ContactModule } from './contact/contact.module';
     UsersModule,
     CategoriesModule,
     ContactModule,
+    EquipmentModule,
+    ServicesModule,
     CommonModule,
   ],
   controllers: [AppController],
