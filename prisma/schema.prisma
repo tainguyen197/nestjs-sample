@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("EDITOR")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Media     Media[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  language    String   @default("vi") // "vi" or "en"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  news        News[]   @relation("NewsCategory")
+  newsEn      News[]   @relation("NewsCategoryEn")
+
+  @@unique([slug, language])
+  @@index([language])
+}
+
+model Service {
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  title              String
+  titleEn            String?
+  description        String?
+  descriptionEn      String?
+  shortDescription   String?
+  shortDescriptionEn String?
+  keywords           String?
+  enKeywords         String?
+  status             String   @default("DRAFT")
+  showOnHomepage     Boolean  @default(false)
+  featureImageId     String?  @unique
+  featureImageEnId   String?  @unique
+  metaTitle          String?
+  metaTitleEn        String?
+  metaDescription    String?
+  metaDescriptionEn  String?
+  metaKeywords       String?
+  metaKeywordsEn     String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  featureImageEn     Media?   @relation("ServiceFeatureImageEn", fields: [featureImageEnId], references: [id])
+  featureImage       Media?   @relation("ServiceFeatureImage", fields: [featureImageId], references: [id])
+
+  @@index([showOnHomepage])
+  @@index([showOnHomepage, createdAt])
+}
+
+model Equipment {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  nameEn             String?
+  description        String
+  descriptionEn      String?
+  status             String   @default("ACTIVE")
+  showOnHomepage     Boolean  @default(true)
+  order              Int      @default(0)
+  imageId            String?  @unique
+  imageEnId          String?  @unique
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  image              Media?   @relation("EquipmentImage", fields: [imageId], references: [id])
+  imageEn            Media?   @relation("EquipmentImageEn", fields: [imageEnId], references: [id])
+  
+  @@index([showOnHomepage])
+  @@index([order])
+}
+
+model News {
+  id                 String    @id @default(cuid())
+  slug               String    @unique
+  title              String
+  titleEn            String?
+  description        String?
+  descriptionEn      String?
+  shortDescription   String?
+  shortDescriptionEn String?
+  status             String    @default("DRAFT")
+  showOnHomepage     Boolean   @default(false)
+  pin                Boolean   @default(false)
+  categoryId         String?
+  categoryEnId       String?
+  featureImageId     String?   @unique
+  featureImageEnId   String?   @unique
+  metaTitle          String?
+  metaTitleEn        String?
+  metaDescription    String?
+  metaDescriptionEn  String?
+  metaKeywords       String?
+  metaKeywordsEn     String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  category           Category? @relation("NewsCategory", fields: [categoryId], references: [id])
+  categoryEn         Category? @relation("NewsCategoryEn", fields: [categoryEnId], references: [id])
+  featureImageEn     Media?    @relation("NewsFeatureImageEn", fields: [featureImageEnId], references: [id])
+  featureImage       Media?    @relation("NewsFeatureImage", fields: [featureImageId], references: [id])
+
+  @@index([showOnHomepage])
+  @@index([showOnHomepage, createdAt])
+  @@index([categoryId])
+  @@index([categoryEnId])
+  @@index([pin])
+  @@index([pin, createdAt])
+}
+
+model Media {
+  id                String      @id @default(cuid())
+  url               String
+  fileName          String?
+  originalName      String?
+  fileType          String?
+  fileSize          Int?
+  createdAt         DateTime    @default(now())
+  uploadedById      String?
+  bannerImage       Banner?     @relation("BannerImage")
+  bannerImageEn     Banner?     @relation("BannerImageEn")
+  uploadedBy        User?       @relation(fields: [uploadedById], references: [id])
+  newsImageEn       News?       @relation("NewsFeatureImageEn")
+  newsImage         News?       @relation("NewsFeatureImage")
+  serviceImageEn    Service?    @relation("ServiceFeatureImageEn")
+  serviceImage      Service?    @relation("ServiceFeatureImage")
+  teamMemberImageEn TeamMember? @relation("TeamMemberImageEn")
+  teamMemberImage   TeamMember? @relation("TeamMemberImage")
+  equipmentImage    Equipment?  @relation("EquipmentImage")
+  equipmentImageEn  Equipment?  @relation("EquipmentImageEn")
+}
+
+model TeamMember {
+  id            String   @id @default(cuid())
+  name          String
+  nameEn        String?
+  title         String
+  titleEn       String?
+  description   String
+  descriptionEn String?
+  imageId       String?  @unique
+  imageEnId     String?  @unique
+  order         Int      @default(0)
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  imageEn       Media?   @relation("TeamMemberImageEn", fields: [imageEnId], references: [id])
+  image         Media?   @relation("TeamMemberImage", fields: [imageId], references: [id])
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  type      String   @unique
+  link      String?
+  imageId   String?  @unique
+  imageEnId String?  @unique
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  image     Media?   @relation("BannerImage", fields: [imageId], references: [id])
+  imageEn   Media?   @relation("BannerImageEn", fields: [imageEnId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  userId    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Contact {
+  id              String   @id @default(cuid())
+  phone           String?
+  email           String?
+  address         String?
+  addressEn       String?
+  businessHours   String?
+  businessHoursEn String?
+  facebookUrl     String?
+  zaloUrl         String?
+  instagramUrl    String?
+  appointmentLink String?
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
