@@ -7,8 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { NewsService } from './news/news.service';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { Roles } from './auth/decorators/roles.decorator';
+import { User } from './auth/decorators/user.decorator';
 
 @Controller('news')
 export class NewsController {
@@ -24,18 +29,24 @@ export class NewsController {
     return this.svc.get(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
   @Post()
-  create(@Body() dto: any) {
-    return this.svc.create(dto, 'temp-user');
+  create(@Body() dto: any, @User() user: any) {
+    return this.svc.create(dto, user.id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.svc.update(id, dto, 'temp-user');
+  update(@Param('id') id: string, @Body() dto: any, @User() user: any) {
+    return this.svc.update(id, dto, user.id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.svc.remove(id, 'temp-user');
+  remove(@Param('id') id: string, @User() user: any) {
+    return this.svc.remove(id, user.id);
   }
 }
