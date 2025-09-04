@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
+import { isValidRole, UserRole } from './utils/role.utils';
 
 export interface LoginDto {
   email: string;
@@ -12,7 +13,7 @@ export interface RegisterDto {
   email: string;
   password: string;
   name: string;
-  role?: string;
+  role?: UserRole;
 }
 
 export interface JwtPayload {
@@ -73,6 +74,11 @@ export class AuthService {
 
     if (existingUser) {
       throw new BadRequestException('User with this email already exists');
+    }
+
+    // Validate role if provided
+    if (registerDto.role && !isValidRole(registerDto.role)) {
+      throw new BadRequestException('Invalid role. Valid roles are: SUPER_ADMIN, ADMIN, EDITOR');
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);

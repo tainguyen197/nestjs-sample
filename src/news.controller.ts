@@ -30,14 +30,14 @@ export class NewsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'EDITOR')
+  @Roles('EDITOR') // EDITOR and above can create/update
   @Post()
   create(@Body() dto: any, @User() user: any) {
     return this.svc.create(dto, user.id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'EDITOR')
+  @Roles('EDITOR') // EDITOR and above can create/update
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: any, @User() user: any) {
     return this.svc.update(id, dto, user.id);
