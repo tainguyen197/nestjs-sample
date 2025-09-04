@@ -101,6 +101,38 @@ export class MediaService {
     const total = await this.prisma.media.count();
     return { total };
   }
+
+  async createFromFile(
+    file: { filename: string; mimetype: string; size: number },
+    uploadedById?: string,
+  ) {
+    // Files saved under public/uploads/<filename>
+    const url = `/uploads/${file.filename}`;
+
+    const media = await this.prisma.media.create({
+      data: {
+        url,
+        fileName: file.filename,
+        originalName: file.filename,
+        fileType: file.mimetype,
+        fileSize: file.size,
+        uploadedById,
+      },
+    });
+
+    if (uploadedById) {
+      await this.auditLog.logCRUD({
+        operation: 'CREATE',
+        entity: 'MEDIA',
+        entityId: media.id,
+        userId: uploadedById,
+        entityName: media.fileName || media.originalName || media.url,
+        changes: { url: media.url, fileType: media.fileType, fileSize: media.fileSize },
+      });
+    }
+
+    return media;
+  }
 }
 
 

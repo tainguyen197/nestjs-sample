@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({ origin: [process.env.FRONTEND_URL], credentials: true });
+  const allowedOrigins = [process.env.FRONTEND_URL].filter(Boolean) as string[];
+  app.enableCors({ origin: allowedOrigins.length ? allowedOrigins : true, credentials: true });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -22,6 +25,9 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  // Serve static files from public/
+  app.useStaticAssets(join(process.cwd(), 'public'));
 
   await app.listen(process.env.PORT!);
 }
