@@ -33,7 +33,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-assignment': 'warn',
       '@prettier/prettier': 'off',
         "prettier/prettier": [
-          "error",
+          "off",
           {
             "singleQuote": false,
             "parser": "flow"
