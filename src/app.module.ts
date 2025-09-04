@@ -11,6 +11,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ContactModule } from './contact/contact.module';
 import { EquipmentModule } from './equipment/equipment.module';
 import { ServicesModule } from './services/services.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ServicesModule } from './services/services.module';
     ContactModule,
     EquipmentModule,
     ServicesModule,
+    TeamModule,
     CommonModule,
   ],
   controllers: [AppController],
