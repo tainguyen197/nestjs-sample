@@ -7,6 +7,7 @@ import { NewsModule } from './news/news.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     NewsModule,
     UsersModule,
+    CategoriesModule,
     CommonModule,
   ],
   controllers: [AppController],
