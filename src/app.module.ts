@@ -12,6 +12,7 @@ import { ContactModule } from './contact/contact.module';
 import { EquipmentModule } from './equipment/equipment.module';
 import { ServicesModule } from './services/services.module';
 import { TeamModule } from './team/team.module';
+import { BannersModule } from './banners/banners.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TeamModule } from './team/team.module';
     EquipmentModule,
     ServicesModule,
     TeamModule,
+    BannersModule,
     CommonModule,
   ],
   controllers: [AppController],
