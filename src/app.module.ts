@@ -13,6 +13,7 @@ import { EquipmentModule } from './equipment/equipment.module';
 import { ServicesModule } from './services/services.module';
 import { TeamModule } from './team/team.module';
 import { BannersModule } from './banners/banners.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BannersModule } from './banners/banners.module';
     EquipmentModule,
     ServicesModule,
     TeamModule,
+    MediaModule,
     BannersModule,
     CommonModule,
   ],
