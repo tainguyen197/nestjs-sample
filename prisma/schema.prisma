@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String     @id @default(cuid())
+  email     String     @unique
   name      String?
   password  String
-  role      String   @default("EDITOR")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      String     @default("EDITOR")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Media     Media[]
+  auditLogs AuditLog[]
 
   @@map("users")
 }
@@ -183,6 +184,7 @@ model AuditLog {
   userId    String
   details   String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Contact {

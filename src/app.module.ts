@@ -15,6 +15,7 @@ import { TeamModule } from './team/team.module';
 import { BannersModule } from './banners/banners.module';
 import { MediaModule } from './media/media.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     MediaModule,
     BannersModule,
     DashboardModule,
+    LogsModule,
     CommonModule,
   ],
   controllers: [AppController],
