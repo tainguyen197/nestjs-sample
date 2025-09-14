@@ -27,15 +27,25 @@ export class MediaService {
       ];
     }
 
-    const [items, total] = await Promise.all([
+    const [items, total, totalSizeResult] = await Promise.all([
       this.prisma.media.findMany({
         where,
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit
       }),
-      this.prisma.media.count({ where })
+      this.prisma.media.count({ where }),
+      // Calculate total file size
+      this.prisma.media.aggregate({
+        where,
+        _sum: {
+          fileSize: true
+        }
+      })
     ]);
+
+    const totalSizeBytes = totalSizeResult._sum.fileSize || 0;
+    const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
 
     return {
       data: items,
@@ -43,7 +53,8 @@ export class MediaService {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
+        totalSizeMB: totalSizeMB
       }
     };
   }
@@ -112,8 +123,22 @@ export class MediaService {
   }
 
   async getStats() {
-    const total = await this.prisma.media.count();
-    return { total };
+    const [total, totalSizeResult] = await Promise.all([
+      this.prisma.media.count(),
+      this.prisma.media.aggregate({
+        _sum: {
+          fileSize: true
+        }
+      })
+    ]);
+
+    const totalSizeBytes = totalSizeResult._sum.fileSize || 0;
+    const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
+
+    return { 
+      total,
+      totalSizeMB 
+    };
   }
 
   async createFromFile(
