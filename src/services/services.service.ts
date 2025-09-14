@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditLogService } from '../common/services/audit-log.service';
 import { createSlug } from './utils/services.utils';
+import type { CreateServiceDto, UpdateServiceDto } from './schemas/services.schema';
 
 @Injectable()
 export class ServicesService {
@@ -118,27 +119,7 @@ export class ServicesService {
     };
   }
 
-  async create(dto: {
-    title: string;
-    titleEn?: string;
-    description?: string;
-    descriptionEn?: string;
-    shortDescription?: string;
-    shortDescriptionEn?: string;
-    keywords?: string;
-    enKeywords?: string;
-    status?: string;
-    showOnHomepage?: boolean;
-    slug?: string;
-    featureImageId?: string;
-    featureImageEnId?: string;
-    metaTitle?: string;
-    metaTitleEn?: string;
-    metaDescription?: string;
-    metaDescriptionEn?: string;
-    metaKeywords?: string;
-    metaKeywordsEn?: string;
-  }, userId: string) {
+  async create(dto: CreateServiceDto, userId: string) {
     // Check total items limit (30)
     const total = await this.prisma.service.count();
     if (total >= 30) {
@@ -212,27 +193,7 @@ export class ServicesService {
     return service;
   }
 
-  async update(id: string, dto: {
-    title?: string;
-    titleEn?: string;
-    description?: string;
-    descriptionEn?: string;
-    shortDescription?: string;
-    shortDescriptionEn?: string;
-    keywords?: string;
-    enKeywords?: string;
-    status?: string;
-    showOnHomepage?: boolean;
-    slug?: string;
-    featureImageId?: string;
-    featureImageEnId?: string;
-    metaTitle?: string;
-    metaTitleEn?: string;
-    metaDescription?: string;
-    metaDescriptionEn?: string;
-    metaKeywords?: string;
-    metaKeywordsEn?: string;
-  }, userId: string) {
+  async update(id: string, dto: UpdateServiceDto, userId: string) {
     const existing = await this.prisma.service.findUnique({ where: { id } });
     if (!existing) {
       throw new NotFoundException('Service not found');
