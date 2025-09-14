@@ -42,6 +42,7 @@ export class TeamService {
         where,
         include: {
           image: true,
+          imageEn: true,
         },
         orderBy: { order: 'asc' },
         skip: (page - 1) * limit,
@@ -66,6 +67,7 @@ export class TeamService {
       where: { id },
       include: {
         image: true,
+        imageEn: true,
       },
     });
 
