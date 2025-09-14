@@ -4,7 +4,7 @@ export const BannerStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
 
 export const CreateBannerSchema = z.object({
   type: z.string().min(1).max(50),
-  link: z.string().url().optional(),
+  link: z.string().url().optional().or(z.literal('')),
   status: BannerStatusSchema.optional().default('ACTIVE'),
   imageId: z.string().optional(),
   imageEnId: z.string().optional(),
@@ -12,7 +12,7 @@ export const CreateBannerSchema = z.object({
 
 export const UpdateBannerSchema = z.object({
   type: z.string().min(1).max(50).optional(),
-  link: z.string().url().optional(),
+    link: z.string().url().optional().or(z.literal('')),
   status: BannerStatusSchema.optional(),
   imageId: z.string().nullable().optional(),
   imageEnId: z.string().nullable().optional(),
